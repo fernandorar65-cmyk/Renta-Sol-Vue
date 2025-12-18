@@ -1,4 +1,3 @@
-import { computed } from 'vue'
 import type { ApiResponse } from '../types'
 
 export function useApi<T = unknown>() {
