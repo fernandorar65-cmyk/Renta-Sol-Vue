@@ -1,4 +1,4 @@
-import type { ApiResponse } from '../constants/index'
+import type { ApiResponse } from '../types'
 
 export function useApi<T = unknown>() {
   const handleResponse = (response: ApiResponse<T>) => {

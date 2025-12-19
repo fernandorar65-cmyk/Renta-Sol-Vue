@@ -30,102 +30,136 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Crear Cuenta
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+      <!-- Logo/Brand -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl shadow-lg mb-4">
+          <span class="text-3xl">🍽️</span>
+        </div>
+        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+          RentaSol
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Regístrate en RentaSol
+        <p class="mt-2 text-gray-600 font-medium">
+          Crea tu cuenta y comienza
         </p>
       </div>
 
-      <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <div class="space-y-4">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">
-              Nombre completo
-            </label>
-            <input
-              id="name"
-              v-model="form.name"
-              type="text"
-              required
-              class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Tu nombre"
-            />
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <form class="space-y-5" @submit.prevent="handleSubmit">
+          <div class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                Nombre completo
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-400">👤</span>
+                </div>
+                <input
+                  id="name"
+                  v-model="form.name"
+                  type="text"
+                  required
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none"
+                  placeholder="Tu nombre completo"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                Correo electrónico
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-400">📧</span>
+                </div>
+                <input
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  required
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none"
+                  placeholder="correo@ejemplo.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                Contraseña
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-400">🔒</span>
+                </div>
+                <input
+                  id="password"
+                  v-model="form.password"
+                  type="password"
+                  required
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none"
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="userType" class="block text-sm font-semibold text-gray-700 mb-2">
+                Tipo de usuario
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-400">👥</span>
+                </div>
+                <select
+                  id="userType"
+                  v-model="form.userType"
+                  required
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 bg-white rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none appearance-none"
+                >
+                  <option v-for="type in userTypes" :key="type.value" :value="type.value">
+                    {{ type.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">
-              Correo electrónico
-            </label>
-            <input
-              id="email"
-              v-model="form.email"
-              type="email"
-              required
-              class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="correo@ejemplo.com"
-            />
+          <div v-if="authStore.error" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <p class="text-red-700 text-sm font-medium">{{ authStore.error }}</p>
           </div>
 
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
-              Contraseña
-            </label>
-            <input
-              id="password"
-              v-model="form.password"
-              type="password"
-              required
-              class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Mínimo 6 caracteres"
-            />
-          </div>
-
-          <div>
-            <label for="userType" class="block text-sm font-medium text-gray-700">
-              Tipo de usuario
-            </label>
-            <select
-              id="userType"
-              v-model="form.userType"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option v-for="type in userTypes" :key="type.value" :value="type.value">
-                {{ type.label }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div v-if="authStore.error" class="text-red-600 text-sm text-center">
-          {{ authStore.error }}
-        </div>
-
-        <div>
           <button
             type="submit"
             :disabled="authStore.isLoading"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3.5 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            <span v-if="authStore.isLoading">Registrando...</span>
-            <span v-else>Registrarse</span>
+            <span v-if="authStore.isLoading" class="flex items-center justify-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Registrando...
+            </span>
+            <span v-else>Crear Cuenta</span>
           </button>
-        </div>
 
-        <div class="text-center">
-          <router-link
-            to="/login"
-            class="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            ¿Ya tienes cuenta? Inicia sesión
-          </router-link>
-        </div>
-      </form>
+          <div class="text-center pt-4">
+            <p class="text-sm text-gray-600">
+              ¿Ya tienes cuenta?
+              <router-link
+                to="/login"
+                class="font-semibold text-purple-600 hover:text-purple-700 transition-colors"
+              >
+                Inicia sesión aquí
+              </router-link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>

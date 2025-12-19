@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import type { ApiResponse } from '../constants/index'
+import type { ApiResponse } from '../types'
 import { storageService } from './storage.service'
 import { STORAGE_KEYS } from '../constants'
 

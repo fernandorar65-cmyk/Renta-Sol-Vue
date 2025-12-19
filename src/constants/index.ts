@@ -24,13 +24,6 @@ export const ReservationStatus = {
 // Crear un tipo derivado del objeto
 export type ReservationStatus = typeof ReservationStatus[keyof typeof ReservationStatus]
 
-export interface ApiResponse<T = unknown> {
-  success: boolean
-  data?: T
-  message?: string
-  errors?: string[]
-}
-
 // API endpoints
 export const API_ENDPOINTS = {
   AUTH: {
