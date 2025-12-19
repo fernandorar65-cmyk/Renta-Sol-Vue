@@ -1,4 +1,4 @@
-import type { ReservationStatus } from '../../../types'
+import { ReservationStatus } from '../../../constants'
 
 export interface Reservation {
   id: string

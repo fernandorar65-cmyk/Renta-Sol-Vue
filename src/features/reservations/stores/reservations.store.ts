@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { reservationsService } from '../services/reservations.service'
+import { useErrorHandler } from '../../../composables/useErrorHandler'
 import type { Reservation, CreateReservationRequest, UpdateReservationStatusRequest } from '../types'
 
 export const useReservationsStore = defineStore('reservations', () => {
+  const { error, handleApiError, handleException, clearError: clearErrorHandler } = useErrorHandler()
+
   const reservations = ref<Reservation[]>([])
   const currentReservation = ref<Reservation | null>(null)
   const isLoading = ref(false)
-  const error = ref<string | null>(null)
 
   const reservationsCount = computed(() => reservations.value.length)
 
@@ -22,7 +24,7 @@ export const useReservationsStore = defineStore('reservations', () => {
   async function create(data: CreateReservationRequest) {
     try {
       isLoading.value = true
-      error.value = null
+      clearErrorHandler()
 
       const response = await reservationsService.create(data)
 
@@ -31,11 +33,11 @@ export const useReservationsStore = defineStore('reservations', () => {
         return { success: true, data: response.data }
       }
 
-      error.value = response.message || 'Error al crear reserva'
-      return { success: false, error: error.value }
+      const errorMessage = handleApiError(response, 'Error al crear reserva')
+      return { success: false, error: errorMessage }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
-      return { success: false, error: error.value }
+      const errorMessage = handleException(err, 'Error desconocido al crear reserva')
+      return { success: false, error: errorMessage }
     } finally {
       isLoading.value = false
     }
@@ -44,7 +46,7 @@ export const useReservationsStore = defineStore('reservations', () => {
   async function fetchById(reservationId: string, restaurantId: string) {
     try {
       isLoading.value = true
-      error.value = null
+      clearErrorHandler()
 
       const response = await reservationsService.getById(reservationId, restaurantId)
 
@@ -53,11 +55,11 @@ export const useReservationsStore = defineStore('reservations', () => {
         return { success: true, data: response.data }
       }
 
-      error.value = response.message || 'Error al cargar reserva'
-      return { success: false, error: error.value }
+      const errorMessage = handleApiError(response, 'Error al cargar reserva')
+      return { success: false, error: errorMessage }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
-      return { success: false, error: error.value }
+      const errorMessage = handleException(err, 'Error desconocido al cargar reserva')
+      return { success: false, error: errorMessage }
     } finally {
       isLoading.value = false
     }
@@ -66,7 +68,7 @@ export const useReservationsStore = defineStore('reservations', () => {
   async function updateStatus(data: UpdateReservationStatusRequest) {
     try {
       isLoading.value = true
-      error.value = null
+      clearErrorHandler()
 
       const response = await reservationsService.updateStatus(data)
 
@@ -81,18 +83,18 @@ export const useReservationsStore = defineStore('reservations', () => {
         return { success: true, data: response.data }
       }
 
-      error.value = response.message || 'Error al actualizar estado'
-      return { success: false, error: error.value }
+      const errorMessage = handleApiError(response, 'Error al actualizar estado')
+      return { success: false, error: errorMessage }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
-      return { success: false, error: error.value }
+      const errorMessage = handleException(err, 'Error desconocido al actualizar estado')
+      return { success: false, error: errorMessage }
     } finally {
       isLoading.value = false
     }
   }
 
   function clearError() {
-    error.value = null
+    clearErrorHandler()
   }
 
   function setCurrentReservation(reservation: Reservation | null) {

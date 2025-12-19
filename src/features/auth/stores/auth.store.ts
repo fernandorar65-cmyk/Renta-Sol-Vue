@@ -1,13 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { authService } from '../services/auth.service'
+import { storageService } from '../../../services/storage.service'
+import { useErrorHandler } from '../../../composables/useErrorHandler'
+import { STORAGE_KEYS } from '../../../constants'
 import type { User, LoginRequest, RegisterRequest } from '../types'
 
 export const useAuthStore = defineStore('auth', () => {
+  const router = useRouter()
+  const { error, handleApiError, handleException, clearError: clearErrorHandler } = useErrorHandler()
+
   const user = ref<User | null>(null)
-  const token = ref<string | null>(localStorage.getItem('auth_token'))
+  const token = ref<string | null>(storageService.getItem(STORAGE_KEYS.AUTH_TOKEN))
   const isLoading = ref(false)
-  const error = ref<string | null>(null)
 
   const isAuthenticated = computed(() => !!token.value && !!user.value)
 
@@ -20,22 +26,22 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials: LoginRequest) {
     try {
       isLoading.value = true
-      error.value = null
+      clearErrorHandler()
 
       const response = await authService.login(credentials)
 
       if (response.success && response.data) {
         token.value = response.data.token
         user.value = response.data.user
-        localStorage.setItem('auth_token', response.data.token)
+        storageService.setItem(STORAGE_KEYS.AUTH_TOKEN, response.data.token)
         return { success: true }
       }
 
-      error.value = response.message || 'Error al iniciar sesión'
-      return { success: false, error: error.value }
+      const errorMessage = handleApiError(response, 'Error al iniciar sesión')
+      return { success: false, error: errorMessage }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
-      return { success: false, error: error.value }
+      const errorMessage = handleException(err, 'Error desconocido al iniciar sesión')
+      return { success: false, error: errorMessage }
     } finally {
       isLoading.value = false
     }
@@ -44,22 +50,22 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(data: RegisterRequest) {
     try {
       isLoading.value = true
-      error.value = null
+      clearErrorHandler()
 
       const response = await authService.register(data)
 
       if (response.success && response.data) {
         token.value = response.data.token
         user.value = response.data.user
-        localStorage.setItem('auth_token', response.data.token)
+        storageService.setItem(STORAGE_KEYS.AUTH_TOKEN, response.data.token)
         return { success: true }
       }
 
-      error.value = response.message || 'Error al registrar usuario'
-      return { success: false, error: error.value }
+      const errorMessage = handleApiError(response, 'Error al registrar usuario')
+      return { success: false, error: errorMessage }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
-      return { success: false, error: error.value }
+      const errorMessage = handleException(err, 'Error desconocido al registrar usuario')
+      return { success: false, error: errorMessage }
     } finally {
       isLoading.value = false
     }
@@ -68,11 +74,12 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     user.value = null
     token.value = null
-    localStorage.removeItem('auth_token')
+    storageService.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+    router.push('/login')
   }
 
   function clearError() {
-    error.value = null
+    clearErrorHandler()
   }
 
   return {

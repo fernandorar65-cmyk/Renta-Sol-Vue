@@ -1,7 +1,16 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import type { ApiResponse } from '../types'
+import { storageService } from './storage.service'
+import { STORAGE_KEYS } from '../constants'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7071/api/v1'
+
+// Callback para redirección cuando el token expira
+let onUnauthorized: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: () => void) {
+  onUnauthorized = handler
+}
 
 class ApiClient {
   private client: AxiosInstance
@@ -12,6 +21,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 10000, // 10 segundos timeout
     })
 
     this.setupInterceptors()
@@ -21,7 +31,7 @@ class ApiClient {
     // Request interceptor para agregar token JWT
     this.client.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('auth_token')
+        const token = storageService.getItem(STORAGE_KEYS.AUTH_TOKEN)
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
@@ -36,8 +46,14 @@ class ApiClient {
       (error) => {
         if (error.response?.status === 401) {
           // Token expirado o inválido
-          localStorage.removeItem('auth_token')
-          window.location.href = '/login'
+          storageService.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+          // Usar callback en lugar de window.location para permitir SSR y testing
+          if (onUnauthorized) {
+            onUnauthorized()
+          } else if (typeof window !== 'undefined') {
+            // Fallback solo si estamos en el navegador
+            window.location.href = '/login'
+          }
         }
         return Promise.reject(error)
       }

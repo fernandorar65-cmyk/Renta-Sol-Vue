@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
+import { UserType } from '../../../constants'
 import type { RegisterRequest } from '../types'
 
 const router = useRouter()
@@ -11,13 +12,13 @@ const form = ref<RegisterRequest>({
   email: '',
   password: '',
   name: '',
-  userType: 3, // CUSTOMER por defecto
+  userType: UserType.CUSTOMER, // CUSTOMER por defecto
 })
 
 const userTypes = [
-  { value: 1, label: 'Administrador' },
-  { value: 2, label: 'Propietario de Negocio' },
-  { value: 3, label: 'Cliente' },
+  { value: UserType.ADMINISTRATOR, label: 'Administrador' },
+  { value: UserType.OWNER_BUSSINES, label: 'Propietario de Negocio' },
+  { value: UserType.CUSTOMER, label: 'Cliente' },
 ]
 
 const handleSubmit = async () => {

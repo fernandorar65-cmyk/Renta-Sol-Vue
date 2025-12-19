@@ -9,8 +9,16 @@ const restaurantsStore = useRestaurantsStore()
 const restaurantId = computed(() => route.params.id as string)
 
 onMounted(async () => {
-  // Aquí podrías tener un endpoint específico para obtener un restaurante por ID
-  // Por ahora usamos fetchAll y filtramos
+  // Intentar obtener desde el store primero (si ya está cargado)
+  const existingRestaurant = restaurantsStore.restaurants.find(r => r.id === restaurantId.value)
+  if (existingRestaurant) {
+    restaurantsStore.setCurrentRestaurant(existingRestaurant)
+    return
+  }
+
+  // Si no está en el store, intentar cargar por ID directamente
+  // Nota: Esto requiere que el backend tenga un endpoint GET /restaurantes/:id
+  // Por ahora, cargamos todos (mejorar cuando el endpoint esté disponible)
   await restaurantsStore.fetchAll()
   const restaurant = restaurantsStore.restaurants.find(r => r.id === restaurantId.value)
   if (restaurant) {
