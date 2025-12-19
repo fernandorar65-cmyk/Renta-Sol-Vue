@@ -18,6 +18,14 @@ export enum ReservationStatus {
   CANCELADA = 'cancelada',
 }
 
+export interface ApiResponse<T = unknown> {
+  success: boolean
+  data?: T
+  message?: string
+  errors?: string[]
+}
+
+
 // API endpoints
 export const API_ENDPOINTS = {
   AUTH: {
