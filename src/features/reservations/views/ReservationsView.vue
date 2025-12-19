@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useReservationsStore } from '../stores/reservations.store'
-import { useAuthStore } from '../../auth/stores/auth.store'
+// import { useAuthStore } from '../../auth/stores/auth.store'
 
 const reservationsStore = useReservationsStore()
-const authStore = useAuthStore()
+// const authStore = useAuthStore()
 
 onMounted(() => {
   // Aquí podrías cargar las reservas del usuario actual

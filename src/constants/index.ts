@@ -3,20 +3,26 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
 } as const
 
-// User types
-export enum UserType {
-  ADMINISTRATOR = 1,
-  OWNER_BUSSINES = 2,
-  CUSTOMER = 3,
-}
+// User types - usando objeto const con tipo
+export const UserType = {
+  ADMINISTRATOR: 1,
+  OWNER_BUSSINES: 2,
+  CUSTOMER: 3,
+} as const
 
-// Reservation statuses
-export enum ReservationStatus {
-  PENDIENTE = 'pendiente',
-  CONFIRMADA = 'confirmada',
-  COMPLETADA = 'completada',
-  CANCELADA = 'cancelada',
-}
+// Crear un tipo derivado del objeto
+export type UserType = typeof UserType[keyof typeof UserType]
+
+// Reservation statuses - usando objeto const con tipo
+export const ReservationStatus = {
+  PENDIENTE: 'pendiente',
+  CONFIRMADA: 'confirmada',
+  COMPLETADA: 'completada',
+  CANCELADA: 'cancelada',
+} as const
+
+// Crear un tipo derivado del objeto
+export type ReservationStatus = typeof ReservationStatus[keyof typeof ReservationStatus]
 
 export interface ApiResponse<T = unknown> {
   success: boolean
@@ -24,7 +30,6 @@ export interface ApiResponse<T = unknown> {
   message?: string
   errors?: string[]
 }
-
 
 // API endpoints
 export const API_ENDPOINTS = {
@@ -48,4 +53,3 @@ export const API_ENDPOINTS = {
     UPDATE_STATUS: '/reservas/actualizar-estado',
   },
 } as const
-

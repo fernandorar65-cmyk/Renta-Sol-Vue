@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ApiResponse } from '../types'
+import type { ApiResponse } from '../constants/index'
 
 export interface ErrorHandlerOptions {
   showNotification?: boolean
